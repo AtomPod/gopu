@@ -68,8 +68,6 @@ func (a *Account) Register(router *gin.RouterGroup) {
 		{
 			user.GET("/current_user", a.CurrentUser)
 
-			user.GET("/current_user/:type", a.CurrentUserType)
-
 			user.PUT("/user/:id/profile", a.UpdateUserProfile)
 
 			user.DELETE("/user/:id", a.DeleteUser)
@@ -119,35 +117,6 @@ func (a *Account) CreateUserRegisterCode(c *gin.Context) {
 		},
 		nil,
 	)
-
-	// emailContent := template.GenEmailContent(
-	// 	a.Config.Mailer.EmailTemplates.RegisterCodeName,
-	// 	map[string]string{
-	// 		"code": resetCode,
-	// 	},
-	// )
-
-	// if err := mailer.Send(&mailer.Message{
-	// 	From: mailer.User{
-	// 		Address: a.Config.Mailer.Username,
-	// 	},
-	// 	To: []mailer.User{
-	// 		mailer.User{
-	// 			Address: user.Email,
-	// 		},
-	// 	},
-	// 	Subject:     emailContent.Subject,
-	// 	ContentType: "text/html",
-	// 	Body:        emailContent.Body,
-	// }); err != nil {
-	// 	log.Logger(c.Request.Context()).Warn("Failed to send email",
-	// 		zap.String("from", a.Config.Mailer.Username),
-	// 		zap.String("to", user.Email), zap.Error(err),
-	// 	)
-	// 	replyInternalError(c, err)
-	// 	return
-	// }
-	// replyOK(c, nil)
 }
 
 //RegisterUser handles POST /v1/user
@@ -235,14 +204,6 @@ func (a *Account) RegisterUser(c *gin.Context) {
 		)
 	}
 	replyOK(c, createdUser)
-}
-
-//CurrentUserType handles GET  /v1/current_user/:type
-func (a *Account) CurrentUserType(c *gin.Context) {
-	a.withUserByContext(c, func(user *models.User) {
-		path := fmt.Sprintf("/v1/user/%s/%s", user.ID, c.Query("type"))
-		c.Redirect(http.StatusTemporaryRedirect, path)
-	})
 }
 
 //CurrentUser handles GET  /v1/current_user

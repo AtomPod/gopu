@@ -3,18 +3,27 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	forms "github.com/ngs24313/gopu/api/forms/rbac"
+	"github.com/ngs24313/gopu/middleware"
 	"github.com/ngs24313/gopu/models"
 	"github.com/ngs24313/gopu/utils/rolemanager"
 )
 
 //RBAC is rbac api
 type RBAC struct {
-	RoleMgr rolemanager.RoleManager
+	RoleMgr        rolemanager.RoleManager
+	AuthMiddleware *middleware.Auth
 }
 
 //Register register handles
 func (r *RBAC) Register(router *gin.RouterGroup) {
+
+	jwtMiddleware, err := r.AuthMiddleware.Middleware()
+	if err != nil {
+		panic(err)
+	}
+
 	v1 := router.Group("/v1")
+	v1.Use(jwtMiddleware.MiddlewareFunc())
 	{
 		v1.POST("/role", r.CreateRole)
 		v1.DELETE("/role/:name", r.DeleteRole)
