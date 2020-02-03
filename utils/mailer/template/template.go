@@ -84,7 +84,7 @@ func GenEmailContent(name string, data interface{}) EmailTemplateResult {
 	tmpl, ok := templateMapping[name]
 	if !ok {
 		log.Logger(context.Background()).Warn(
-			"Cannot generate email content, name is not exists",
+			"Cannot generate email content, name does not exists",
 			zap.String("name", name),
 			zap.Any("data", data),
 		)
