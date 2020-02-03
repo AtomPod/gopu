@@ -1,0 +1,95 @@
+{
+    "version": "1",
+    "mode": "debug",
+    "http": {
+        "host": "localhost",
+        "port": 8081
+    },
+    "services": {
+        "account": {
+            "register_code_expiration": "24h",
+            "register_code_prefix": "register_code.",
+            "password_reset_code_expiration": "24h",
+            "password_reset_code_eprefix": "pwd_reset_code.",
+            "auth": {
+                "secret_key": "hello world",
+                "token_expiration": "1h",
+                "token_refresh_expiration": "2h",
+                "token_lookup": "",
+                "identity_key": "user"
+            }
+        }
+    },
+    "logger": {
+        "filename": "log.log",
+        "maxage": 1
+    },
+    "database": {
+        "driver": "postgres",
+        "dsn": "user=postgres dbname=postgres password=postgres sslmode=disable"
+    },
+    "mailer": {
+        "username": "",
+        "password": "",
+        "host": "",
+        "port": 0,
+        "emails": {
+            "templates": {
+                "reset_code": {
+                    "subject": "密码修改验证码",
+                    "filepath": "password_reset_code.html"
+                },
+                "registr_code": {
+                    "subject": "用户注册验证码",
+                    "filepath": "register_code.html"
+                }
+            },
+            "password_reset_code_name": "reset_code",
+            "register_code_name": "registr_code"
+        }
+    },
+    "cache": {
+        "type": "memory",
+        "expiration": "10m",
+        "prefix": "gopu"
+    },
+    "casbin": {
+        "modelpath": "./policy/rbac_model.conf",
+        "adapter": "database",
+        "auto_load_duration": "1m"
+    },
+    "rbac": {
+        "roles": [
+            {
+                "name": "admin",
+                "apis": [
+                    {
+                        "path": "*",
+                        "method": "*"
+                    }
+                ]
+            },
+            {
+                "name": "user",
+                "apis": [
+                    {
+                        "path": "/v1/current_user/*",
+                        "method": "*"
+                    },
+                    {
+                        "path": "/v1/current_user",
+                        "method": "GET"
+                    }
+                ],
+                "idapis": [
+                    {
+                        "path": "/v1/user/%s/*",
+                        "method": "*"
+                    }
+                ]
+            }
+        ],
+        "admin": "admin",
+        "user": "user"
+    }
+}
